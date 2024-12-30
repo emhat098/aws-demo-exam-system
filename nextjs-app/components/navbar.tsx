@@ -1,7 +1,6 @@
 import { getSession } from "@auth0/nextjs-auth0";
 import Link from "next/link";
 import { Avatar, Dropdown, Space } from "antd";
-import Image from "next/image";
 import { DownOutlined } from "@ant-design/icons";
 import type { MenuProps } from "antd";
 
