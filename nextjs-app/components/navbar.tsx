@@ -35,7 +35,8 @@ const UserAvatar = async () => {
           <div className={"flex items-center gap-2"}>
             <Avatar
               src={
-                <Image
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
                   src={session.value?.user.picture}
                   alt="avatar"
                   height={50}
