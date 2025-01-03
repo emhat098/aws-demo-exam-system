@@ -4,7 +4,6 @@ export const GET = handleAuth({
   login: handleLogin({
     authorizationParams: {
       audience: process.env.AUTH0_AWS_JWT_AUTHORIZER_AUDIENCE,
-      scope: "openid profile email",
     },
   }),
 });

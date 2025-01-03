@@ -1,12 +1,12 @@
-import type { Metadata } from "next";
-import localFont from "next/font/local";
 import "./globals.css";
 import { AntdRegistry } from "@ant-design/nextjs-registry";
-import { UserProvider } from "@auth0/nextjs-auth0/client";
-import Navbar from "@/components/navbar";
-import { Suspense } from "react";
-import LambdaHealthCheck from "@/components/lambda-health-check";
 import { Spin } from "antd";
+import { Suspense } from "react";
+import { UserProvider } from "@auth0/nextjs-auth0/client";
+import LambdaHealthCheck from "@/components/lambda-health-check";
+import localFont from "next/font/local";
+import Navbar from "@/components/navbar";
+import type { Metadata } from "next";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -39,7 +39,9 @@ export default function RootLayout({
             <Suspense fallback={<Spin />}>
               <LambdaHealthCheck />
             </Suspense>
-            <Navbar />
+            <Suspense fallback={<Spin />}>
+              <Navbar />
+            </Suspense>
             {children}
           </AntdRegistry>
         </body>
