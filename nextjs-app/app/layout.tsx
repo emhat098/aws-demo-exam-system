@@ -3,9 +3,10 @@ import localFont from "next/font/local";
 import "./globals.css";
 import { AntdRegistry } from "@ant-design/nextjs-registry";
 import { UserProvider } from "@auth0/nextjs-auth0/client";
-import { Suspense } from "react";
-import { Spin } from "antd";
 import Navbar from "@/components/navbar";
+import { Suspense } from "react";
+import LambdaHealthCheck from "@/components/lambda-health-check";
+import { Spin } from "antd";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -35,9 +36,10 @@ export default function RootLayout({
           className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         >
           <AntdRegistry>
-            <Suspense fallback={<Spin size="small" />}>
-              <Navbar />
+            <Suspense fallback={<Spin />}>
+              <LambdaHealthCheck />
             </Suspense>
+            <Navbar />
             {children}
           </AntdRegistry>
         </body>
