@@ -1,3 +1,4 @@
+import { AppJWTPayload } from "@/types/jwt";
 import { createRemoteJWKSet, jwtVerify } from "jose";
 
 // Ensure required environment variables exist
@@ -9,9 +10,12 @@ if (!process.env.AUTH0_AWS_JWT_AUTHORIZER_AUDIENCE) {
   throw new Error("AUTH0_AWS_JWT_AUTHORIZER_AUDIENCE environment is not set.");
 }
 
-const JWKS = createRemoteJWKSet(new URL(`${process.env.AUTH0_ISSUER_BASE_URL}.well-known/jwks.json`), {
-  cacheMaxAge: 600000,
-});
+const JWKS = createRemoteJWKSet(
+  new URL(`${process.env.AUTH0_ISSUER_BASE_URL}.well-known/jwks.json`),
+  {
+    cacheMaxAge: 600000,
+  }
+);
 
 /**
  * Verifies and decodes a JWT from Auth0.

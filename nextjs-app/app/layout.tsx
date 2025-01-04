@@ -42,7 +42,7 @@ export default function RootLayout({
             <Suspense fallback={<Spin />}>
               <Navbar />
             </Suspense>
-            {children}
+            <main className={"p-6"}>{children}</main>
           </AntdRegistry>
         </body>
       </UserProvider>
