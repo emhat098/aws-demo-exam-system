@@ -19,8 +19,6 @@ const createQuestion = async (data: Question): Promise<boolean | undefined> => {
       }
     );
 
-    console.log(res);
-
     return res.ok;
   } catch (error) {
     console.log(error);
