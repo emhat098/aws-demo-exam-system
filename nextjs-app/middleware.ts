@@ -14,9 +14,12 @@ const middleware = async (req: NextRequest) => {
   }
 
   if (req.nextUrl.pathname.startsWith("/admin")) {
-    const jwt = await verifyJWT(token?.accessToken as string);
+    const payload = await verifyJWT(token?.accessToken as string);
+    if (!payload) {
+      return NextResponse.redirect(new URL("/api/auth/login", req.nextUrl));
+    }
     const isAllowed = ADMIN_PERMISSIONS.some((c) =>
-      jwt?.permissions?.includes(c)
+      payload?.permissions?.includes(c)
     );
     if (!isAllowed) {
       return NextResponse.redirect(
