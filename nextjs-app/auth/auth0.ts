@@ -1,6 +1,5 @@
 import { AppJWTPayload } from "@/types/jwt";
 import { createLocalJWKSet, createRemoteJWKSet, jwtVerify } from "jose";
-import jwksJSON from "./jwks.json";
 
 // Ensure required environment variables exist
 if (!process.env.AUTH0_ISSUER_BASE_URL) {
@@ -27,7 +26,11 @@ const verifyJWT = async (
   }
 
   try {
-    const jwkRes = await fetch(jsonURL);
+    const jwkRes = await fetch(jsonURL, {
+      headers: {
+        "Cache-Control": "max-age=604800, stale-while-revalidate=86400",
+      },
+    });
     const JWKS = createLocalJWKSet(await jwkRes.json());
 
     const data = await jwtVerify(jwt, JWKS, {
