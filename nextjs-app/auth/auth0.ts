@@ -26,12 +26,12 @@ const verifyJWT = async (
   }
 
   try {
-    const jwkRes = await fetch(jsonURL, {
+    const JWKS = createRemoteJWKSet(new URL(jsonURL), {
+      cacheMaxAge: 604800,
       headers: {
         "Cache-Control": "max-age=604800, stale-while-revalidate=86400",
       },
     });
-    const JWKS = createLocalJWKSet(await jwkRes.json());
 
     const data = await jwtVerify(jwt, JWKS, {
       audience: process.env.AUTH0_AWS_JWT_AUTHORIZER_AUDIENCE,
