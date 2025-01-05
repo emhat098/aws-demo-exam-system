@@ -1,5 +1,6 @@
 import { AppJWTPayload } from "@/types/jwt";
-import { createRemoteJWKSet, jwtVerify } from "jose";
+import { createLocalJWKSet, createRemoteJWKSet, jwtVerify } from "jose";
+import jwksJSON from "./jwks.json";
 
 // Ensure required environment variables exist
 if (!process.env.AUTH0_ISSUER_BASE_URL) {
@@ -10,12 +11,7 @@ if (!process.env.AUTH0_AWS_JWT_AUTHORIZER_AUDIENCE) {
   throw new Error("AUTH0_AWS_JWT_AUTHORIZER_AUDIENCE environment is not set.");
 }
 
-const JWKS = createRemoteJWKSet(
-  new URL(`${process.env.AUTH0_ISSUER_BASE_URL}.well-known/jwks.json`),
-  {
-    cacheMaxAge: 600000,
-  }
-);
+const jsonURL = `${process.env.AUTH0_ISSUER_BASE_URL}.well-known/jwks.json`;
 
 /**
  * Verifies and decodes a JWT from Auth0.
@@ -31,17 +27,19 @@ const verifyJWT = async (
   }
 
   try {
+    const jwkRes = await fetch(jsonURL);
+    const JWKS = createLocalJWKSet(await jwkRes.json());
+
     const data = await jwtVerify(jwt, JWKS, {
       audience: process.env.AUTH0_AWS_JWT_AUTHORIZER_AUDIENCE,
       issuer: process.env.AUTH0_ISSUER_BASE_URL,
     });
     if (data?.payload) {
-      console.log(data.payload);
       return data.payload as AppJWTPayload; // Return the decoded payload
     }
   } catch (error) {
     console.error("JWT Verification Failed:", error);
-    // throw new Error("Unauthorized");
+    throw new Error("Unauthorized");
   }
 };
 

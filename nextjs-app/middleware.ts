@@ -1,4 +1,8 @@
-import { withMiddlewareAuthRequired } from "@auth0/nextjs-auth0/edge";
+import {
+  getAccessToken,
+  getSession,
+  withMiddlewareAuthRequired,
+} from "@auth0/nextjs-auth0/edge";
 import { NextRequest, NextResponse } from "next/server";
 import verifyJWT from "./auth/auth0";
 import { ADMIN_PERMISSIONS } from "./auth/constants";
@@ -10,26 +14,25 @@ const middleware = async (req: NextRequest) => {
   const token = await userEdgeToken(req, res);
 
   if (!token || token === null) {
-    return NextResponse.redirect(new URL("/api/auth/login", req.nextUrl));
+    return redirectToURL(req, "/api/auth/login");
   }
 
   if (req.nextUrl.pathname.startsWith("/admin")) {
     const payload = await verifyJWT(token?.accessToken as string);
-    if (!payload) {
-      return NextResponse.redirect(new URL("/api/auth/login", req.nextUrl));
-    }
     const isAllowed = ADMIN_PERMISSIONS.some((c) =>
       payload?.permissions?.includes(c)
     );
     if (!isAllowed) {
-      return NextResponse.redirect(
-        new URL(`${req.nextUrl.basePath}/403`, req.nextUrl)
-      );
+      return redirectToURL(req, `${req.nextUrl.basePath}/403`);
     }
   }
 
   return res;
 };
+
+function redirectToURL(req: NextRequest, url: string) {
+  return NextResponse.redirect(new URL(url, req.nextUrl));
+}
 
 export default withMiddlewareAuthRequired(middleware);
 
