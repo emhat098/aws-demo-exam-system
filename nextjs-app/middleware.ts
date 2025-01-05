@@ -16,7 +16,7 @@ const middleware = async (req: NextRequest) => {
   if (req.nextUrl.pathname.startsWith("/admin")) {
     const jwt = await verifyJWT(token?.accessToken as string);
     const isAllowed = ADMIN_PERMISSIONS.some((c) =>
-      jwt.permissions?.includes(c)
+      jwt?.permissions?.includes(c)
     );
     if (!isAllowed) {
       return NextResponse.redirect(
