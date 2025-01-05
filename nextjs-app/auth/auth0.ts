@@ -23,17 +23,22 @@ const JWKS = createRemoteJWKSet(
  * @returns {AppJWTPayload} - The decoded JWT payload.
  * @throws Unauthorized error if invalid.
  */
-const verifyJWT = async (jwt: string | undefined): Promise<AppJWTPayload> => {
+const verifyJWT = async (
+  jwt: string | undefined
+): Promise<AppJWTPayload | undefined> => {
   if (!jwt) {
     throw new Error("JWT is missing.");
   }
 
   try {
-    const { payload } = await jwtVerify(jwt, JWKS, {
+    const data = await jwtVerify(jwt, JWKS, {
       audience: process.env.AUTH0_AWS_JWT_AUTHORIZER_AUDIENCE,
       issuer: process.env.AUTH0_ISSUER_BASE_URL,
     });
-    return payload as AppJWTPayload; // Return the decoded payload
+    if (data?.payload) {
+      console.log(data.payload);
+      return data.payload as AppJWTPayload; // Return the decoded payload
+    }
   } catch (error) {
     console.error("JWT Verification Failed:", error);
     throw new Error("Unauthorized");
