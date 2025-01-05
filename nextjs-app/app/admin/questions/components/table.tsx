@@ -3,7 +3,7 @@
 import { Question } from "@/types/question";
 import { Table as AntTable } from "antd";
 import type { TableProps } from "antd";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { FC, useEffect, useState } from "react";
 
 interface DataType {
@@ -80,7 +80,7 @@ const Table: FC<QuestionTableProps> = ({
       );
       setPageTokens(updatedTokens);
     }
-  }, [nextPageToken, currentPage]);
+  }, [nextPageToken, currentPage, pageTokens]);
 
   return (
     <AntTable<DataType>
