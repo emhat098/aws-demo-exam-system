@@ -1,8 +1,10 @@
+import { Suspense } from "react";
+import Questions from "./components/questions";
+import { Spin } from "antd";
 
 export default async function Home() {
-
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
+    <div className="container mx-auto">
       <div className={"flex flex-col items-center gap-3"}>
         <h1 className={"text-2xl"}>Home page</h1>
         <hr className={"w-full"} />
@@ -10,6 +12,9 @@ export default async function Home() {
           Demo AWS + Auth0 + React (Next.js) + Ant Design + DynamoDB + API
           Gateway + SNS + SQS
         </p>
+        <Suspense fallback={<Spin />}>
+          <Questions />
+        </Suspense>
       </div>
     </div>
   );

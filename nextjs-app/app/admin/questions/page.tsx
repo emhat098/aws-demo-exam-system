@@ -1,33 +1,40 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Suspense } from "react";
 import { Button, Spin } from "antd";
-
 import userToken from "@/lib/user-token";
 import Table, { QuestionTableProps } from "./components/table";
+import { unstable_cache as cache } from "next/cache";
 
-const getQuestions = async (
-  limit = 1,
-  currentPage = 1,
-  pageToken?: string
-): Promise<QuestionTableProps | undefined> => {
-  try {
-    const token = await userToken();
-    let url = `${process.env.LAMBDA_API_URL}/questions?limit=${limit}&current_page=${currentPage}`;
-    if (pageToken) url += `&page_token=${encodeURIComponent(pageToken)}`;
+const getQuestions = cache(
+  async (
+    limit = 1,
+    currentPage = 1,
+    pageToken?: string
+  ): Promise<QuestionTableProps | undefined> => {
+    try {
+      const token = await userToken();
+      let url = `${process.env.LAMBDA_API_URL}/questions?limit=${limit}&current_page=${currentPage}`;
+      if (pageToken) url += `&page_token=${encodeURIComponent(pageToken)}`;
 
-    const res = await fetch(url, {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${token.accessToken}`,
-      },
-    });
+      const res = await fetch(url, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token.accessToken}`,
+        },
+      });
 
-    const data = await res.json();
-    return data as QuestionTableProps;
-  } catch (error) {
-    console.log(error);
+      const data = await res.json();
+      return data as QuestionTableProps;
+    } catch (error) {
+      console.log(error);
+    }
+  },
+  ["ADMIN_QUESTION"],
+  {
+    revalidate: 3600,
+    tags: ["ADMIN_QUESTION"],
   }
-};
+);
 
 export default async function QuestionsPage({ searchParams }: any) {
   const sParams = await searchParams;
@@ -52,7 +59,7 @@ export default async function QuestionsPage({ searchParams }: any) {
             Create
           </Button>
           <Suspense fallback={<Spin />}>
-            <Table pagination={pagination} questions={questions} />;
+            <Table pagination={pagination} questions={questions} />
           </Suspense>
         </div>
       </div>
