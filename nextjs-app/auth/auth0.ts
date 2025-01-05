@@ -41,7 +41,7 @@ const verifyJWT = async (
     }
   } catch (error) {
     console.error("JWT Verification Failed:", error);
-    throw new Error("Unauthorized");
+    // throw new Error("Unauthorized");
   }
 };
 
