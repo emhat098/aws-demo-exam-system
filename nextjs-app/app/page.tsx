@@ -12,9 +12,11 @@ export default async function Home() {
           Demo AWS + Auth0 + React (Next.js) + Ant Design + DynamoDB + API
           Gateway + SNS + SQS
         </p>
-        <Suspense fallback={<Spin />}>
-          <Questions />
-        </Suspense>
+        <div className={"w-[50%]"}>
+          <Suspense fallback={<Spin />}>
+            <Questions />
+          </Suspense>
+        </div>
       </div>
     </div>
   );

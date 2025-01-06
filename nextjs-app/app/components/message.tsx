@@ -5,11 +5,15 @@ import { useSearchParams } from "next/navigation";
 
 const Message = () => {
   const searchParams = useSearchParams();
-  const answer = searchParams.get("answer") == "1";
+  let answer = searchParams.get("answer") === "1";
+  if (!answer) {
+    return;
+  }
+
   return (
     <Alert
-      type={answer ? "success" : "error"}
-      message={answer ? "Submitted the answer" : "Something went wrong"}
+      type={answer && "success"}
+      message={answer && "Submitted the answer"}
     />
   );
 };

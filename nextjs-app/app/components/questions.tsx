@@ -2,8 +2,8 @@ import userToken from "@/lib/user-token";
 import { Question } from "@/types/question";
 import { getSession } from "@auth0/nextjs-auth0";
 import { Button } from "antd";
-import { redirect } from "next/navigation";
 import Message from "./message";
+import { redirect } from "next/navigation";
 
 const getQuestions = async (): Promise<Question[] | undefined> => {
   try {
@@ -23,27 +23,23 @@ const getQuestions = async (): Promise<Question[] | undefined> => {
   }
 };
 
-const handleSubmit = async (formData: FormData) => {
-  "use server";
+const submitExam = async (answers: any) => {
   const session = await getSession();
   const token = await userToken();
   const data = {
     student: session?.user.email,
-    answers: Object.fromEntries(formData),
+    answers,
   };
-  let url = `${process.env.LAMBDA_API_URL}/questions?limit=10&current_page=1`;
-  const res = await fetch(url, {
+
+  const res = await fetch(`${process.env.LAMBDA_API_URL}/submit-answer`, {
     method: "POST",
     body: JSON.stringify(data),
     headers: {
       Authorization: `Bearer ${token.accessToken}`,
+      "Content-Type": "application/json",
     },
   });
-
-  if (res.ok) {
-    return redirect("/?answer=1");
-  }
-  return redirect("/?answer=0");
+  return res.ok;
 };
 
 const Questions = async () => {
@@ -53,12 +49,25 @@ const Questions = async () => {
     return <span>Something went wrong.</span>;
   }
 
+  const formAction = async (formData: FormData) => {
+    "use server";
+
+    const result = await submitExam(Object.entries(formData.entries));
+
+    if (result) {
+      return redirect("/?answer=1");
+    } else {
+      console.error("Question creation failed.", result);
+    }
+  };
+
   return (
     <div className={"flex flex-col gap-2"}>
       <Message />
-      <form action={handleSubmit} className={"flex flex-col gap-2"}>
+      <form action={formAction} className={"flex flex-col gap-2"}>
         {questions &&
-          questions?.map((question) => (
+          questions.length > 0 &&
+          questions.map((question) => (
             <div
               key={question.question_id}
               className={"flex flex-col gap-2 border px-4 py-2 rounded-lg"}
