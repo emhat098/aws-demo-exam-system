@@ -39,6 +39,8 @@ const submitExam = async (answers: any) => {
       "Content-Type": "application/json",
     },
   });
+  const body = await res.json();
+  console.log(body, res);
   return res.ok;
 };
 
